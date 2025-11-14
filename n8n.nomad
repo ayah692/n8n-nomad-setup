@@ -3,6 +3,12 @@ job "n8n" {
   type = "service"
 
   group "n8n-group" {
+
+    network {
+      mode = "bridge"
+      port "web" {}
+    }
+
     task "n8n" {
       driver = "docker"
 
@@ -12,19 +18,24 @@ job "n8n" {
       }
 
       env {
-        DB_TYPE     = "postgresdb"
-        DB_POSTGRESDB_HOST     = "localhost"
-        DB_POSTGRESDB_PORT     = "5432"
-        DB_POSTGRESDB_DATABASE = "n8ndb"
-        DB_POSTGRESDB_USER     = "n8n"
-        DB_POSTGRESDB_PASSWORD = "n8npass"
+        DB_TYPE                 = "postgresdb"
+        DB_POSTGRESDB_HOST      = "postgres.service.consul"
+        DB_POSTGRESDB_PORT      = "5432"
+        DB_POSTGRESDB_DATABASE  = "n8ndb"
+        DB_POSTGRESDB_USER      = "admin"
+        DB_POSTGRESDB_PASSWORD  = "mypassword"
+      }
+
+      service {
+        name = "n8n"
+        port = "web"
       }
 
       resources {
         network {
-          port "web" {
-            static = 5678
-          }
+          bandwidth = "10mb"
+
+          port "web" {}
         }
       }
 
@@ -42,4 +53,3 @@ job "n8n" {
     }
   }
 }
-
