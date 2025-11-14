@@ -7,9 +7,7 @@ job "postgres" {
 
     network {
       mode = "bridge"
-      port "db" {
-        static = 5432
-      }
+      port "db" {}
     }
 
     task "postgres" {
@@ -26,6 +24,17 @@ job "postgres" {
         POSTGRES_DB       = "n8ndb"
       }
 
+      service {
+        name = "postgres"
+        port = "db"
+
+        check {
+          type     = "tcp"
+          interval = "10s"
+          timeout  = "2s"
+        }
+      }
+
       volume_mount {
         volume      = "postgres-data"
         destination = "/var/lib/postgresql/data"
@@ -40,4 +49,3 @@ job "postgres" {
     }
   }
 }
-
